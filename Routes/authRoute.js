@@ -1,12 +1,12 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import Admin from "../Models/User.js";
+import Admin from "../models/User.js";
 
 const router = express.Router();
-const JWT_SECRET = "your_jwt_secret"; // later .env मा हाल
+const JWT_SECRET = "your_jwt_secret"; // .env मा राख्ने
 
-// ✅ Register Admin (one-time use)
+// ✅ Register Admin (One time use)
 router.post("/register", async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -34,6 +34,23 @@ router.post("/login", async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: "Login failed" });
   }
+});
+
+// ✅ Middleware to verify token
+const verifyToken = (req, res, next) => {
+  const token = req.headers["authorization"];
+  if (!token) return res.status(403).json({ message: "No token provided" });
+
+  jwt.verify(token, JWT_SECRET, (err, decoded) => {
+    if (err) return res.status(401).json({ message: "Unauthorized" });
+    req.userId = decoded.id;
+    next();
+  });
+};
+
+// ✅ Protected Route
+router.get("/dashboard", verifyToken, (req, res) => {
+  res.json({ message: "Welcome Admin! This is protected data." });
 });
 
 export default router;

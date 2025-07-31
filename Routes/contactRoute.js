@@ -1,37 +1,28 @@
 import express from "express";
-import Contact from "../Models/Contact.js";
+import Message from "../Models/Contact.js";
+import { verifyToken } from "./authRoute.js"; // admin auth middleware
 
 const router = express.Router();
 
-// POST: Save contact
+// ✅ User ले message पठाउने
 router.post("/", async (req, res) => {
+  const { name, email, message } = req.body;
   try {
-    const { name, email, message } = req.body;
-    const newContact = new Contact({ name, email, message });
-    await newContact.save();
-    res.status(201).json({ message: "Message saved successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to save message" });
+    const newMessage = new Message({ name, email, message });
+    await newMessage.save();
+    res.status(201).json({ message: "Message sent successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Error sending message" });
   }
 });
 
-// GET: All contacts
-router.get("/", async (req, res) => {
+// ✅ Admin Dashboard: सबै messages fetch गर्ने
+router.get("/", verifyToken, async (req, res) => {
   try {
-    const contacts = await Contact.find({});
-    res.json(contacts);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching contacts" });
-  }
-});
-
-// DELETE: Delete by ID
-router.delete("/:id", async (req, res) => {
-  try {
-    await Contact.findByIdAndDelete(req.params.id);
-    res.json({ message: "Contact deleted" });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to delete contact" });
+    const messages = await Message.find().sort({ date: -1 });
+    res.json(messages);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching messages" });
   }
 });
 
