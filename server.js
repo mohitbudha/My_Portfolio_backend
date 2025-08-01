@@ -1,29 +1,26 @@
-
-
-
 import express from "express";
-import mongoose from "mongoose";
 import cors from "cors";
+import dotenv from "dotenv";
+import mongoose from "mongoose";
+import contactRoute from "./Routes/contactRoute.js";
+import projectRoute from"./Routes/projectRoute.js";
 import authRoutes from "./Routes/authRoute.js";
-import messageRoutes from "./Routes/contactRoute.js";
 
+dotenv.config();
 const app = express();
-const PORT = 5000;
-
-// ✅ Middlewares
 app.use(cors());
 app.use(express.json());
 
 // ✅ Routes
+app.use("/api/projects", projectRoute);
+app.use("/api/contact", contactRoute);
 app.use("/api/auth", authRoutes);
 
-// ✅ MongoDB Connection
-mongoose.connect("mongodb+srv://mohitbudhamagar8:clusterpassword@cluster0.ka4lhjn.mongodb.net/Portfolio", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => console.log("✅ MongoDB Connected"))
-.catch(err => console.error("❌ MongoDB Error:", err));
+// ✅ Connect DB
+mongoose.connect("mongodb+srv://mohitbudhamagar8:clusterpassword@cluster0.ka4lhjn.mongodb.net/PortfolioDB")
+  .then(() => console.log("MongoDB Connected"))
+  .catch(err => console.log(err));
 
-app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+app.listen(5000, () => console.log("Server running on port 5000"));
 
-app.use("/api/messages", messageRoutes);
+
