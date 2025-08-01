@@ -17,7 +17,7 @@ app.use("/api/contact", contactRoute);
 app.use("/api/auth", authRoutes);
 
 // ✅ Connect DB
-mongoose.connect("mongodb+srv://mohitbudhamagar8:clusterpassword@cluster0.ka4lhjn.mongodb.net/PortfolioDB")
+mongoose.connect("mongodb+srv://mohitbudhamagar8:clusterpassword@cluster0.ka4lhjn.mongodb.net/Portfolio")
   .then(() => console.log("MongoDB Connected"))
   .catch(err => console.log(err));
 
